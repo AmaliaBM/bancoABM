@@ -1,0 +1,35 @@
+ [
+    {
+      "nombre": "Carlos",
+      "apellido": "Gómez",
+      "dni": "12345678A",
+      "fechaNacimiento": "1990-04-15",
+      "estadoBloqueado": false,
+      "fechaAlta": "2023-05-10T10:30:00"
+    },
+    {
+      "nombre": "María",
+      "apellido": "López",
+      "dni": "87654321Z",
+      "fechaNacimiento": "1985-11-02",
+      "estadoBloqueado": true,
+      "fechaAlta": "2022-01-20T09:15:00"
+    },
+    {
+      "nombre": "Luis",
+      "apellido": "Martínez",
+      "dni": "11223344B",
+      "fechaNacimiento": "1975-08-20",
+      "estadoBloqueado": false,
+      "fechaAlta": "2021-09-12T14:45:00"
+    },
+    {
+      "nombre": "Ana",
+      "apellido": "Ruiz",
+      "dni": "99887766C",
+      "fechaNacimiento": "1980-03-09",
+      "estadoBloqueado": true,
+      "fechaAlta": "2020-12-01T08:00:00"
+    }
+  ]
+

@@ -1,0 +1,23 @@
+ [
+    {
+      "numeroCuenta": "ES10001",
+      "saldo": 1000.00,
+      "movimientos": []
+    },
+    {
+      "numeroCuenta": "ES10002",
+      "saldo": 500.00,
+      "movimientos": []
+    },
+    {
+      "numeroCuenta": "ES20001",
+      "saldo": 10000.00,
+      "movimientos": []
+    },
+    {
+      "numeroCuenta": "ES20002",
+      "saldo": 20000.00,
+      "movimientos": []
+    }
+  ]
+

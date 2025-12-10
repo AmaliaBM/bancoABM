@@ -1,0 +1,62 @@
+
+   [
+    {
+      "tipo": "UsuarioParticular",
+      "idUsuario": "USR001",
+      "hashContrasenya": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+      "cuentaBancaria": "ES10001",
+      "nombre": "Carlos",
+      "apellido": "Gómez",
+      "dni": "12345678A",
+      "fechaNacimiento": "1990-04-15",
+      "estadoBloqueado": false,
+      "fechaAlta": "2023-05-10T10:30:00",
+      "estadoCivil": "Soltero",
+      "ocupacion": "Ingeniero Informático"
+    },
+    {
+      "tipo": "UsuarioParticular",
+      "idUsuario": "USR002",
+      "hashContrasenya": "7c222fb2927d828af22f592134e8932480637c0d",
+      "cuentaBancaria": "ES10002",
+      "nombre": "María",
+      "apellido": "López",
+      "dni": "87654321Z",
+      "fechaNacimiento": "1985-11-02",
+      "estadoBloqueado": true,
+      "fechaAlta": "2022-01-20T09:15:00",
+      "estadoCivil": "Casada",
+      "ocupacion": "Abogada"
+    },
+    {
+      "tipo": "UsuarioEmpresa",
+      "idUsuario": "EMP001",
+      "hashContrasenya": "5f4dcc3b5aa765d61d8327deb882cf99",
+      "cuentaBancaria": "ES20001",
+      "nombre": "Luis",
+      "apellido": "Martínez",
+      "dni": "11223344B",
+      "fechaNacimiento": "1975-08-20",
+      "estadoBloqueado": false,
+      "fechaAlta": "2021-09-12T14:45:00",
+      "razonSocial": "Tech Solutions SL",
+      "cif": "B12345678",
+      "sector": "Tecnología"
+    },
+    {
+      "tipo": "UsuarioEmpresa",
+      "idUsuario": "EMP002",
+      "hashContrasenya": "098f6bcd4621d373cade4e832627b4f6",
+      "cuentaBancaria": "ES20002",
+      "nombre": "Ana",
+      "apellido": "Ruiz",
+      "dni": "99887766C",
+      "fechaNacimiento": "1980-03-09",
+      "estadoBloqueado": true,
+      "fechaAlta": "2020-12-01T08:00:00",
+      "razonSocial": "Marketing Global SA",
+      "cif": "A87654321",
+      "sector": "Marketing"
+    }
+  ]
+
