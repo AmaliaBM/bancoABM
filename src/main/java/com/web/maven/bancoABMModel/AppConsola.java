@@ -49,9 +49,9 @@ public class AppConsola {
     }
 
     private static void login() {
-        System.out.print("Ingrese su ID de usuario: ");
-        String id = scanner.nextLine();
-        usuarioActual = usuarioRepo.buscarPorId(id);
+        System.out.print("Ingrese su DNI de usuario: ");
+        String dni = scanner.nextLine();
+        usuarioActual = usuarioRepo.buscarPorDni(dni);
         if (usuarioActual == null) {
             System.out.println("Usuario no encontrado. Saliendo...");
             System.exit(0);
