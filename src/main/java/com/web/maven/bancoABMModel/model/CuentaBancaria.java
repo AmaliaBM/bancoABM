@@ -17,7 +17,7 @@ public class CuentaBancaria {
         this.movimientos = new ArrayList<>();
     }
 
-    public CuentaBancaria(String numeroCuenta, BigDecimal saldoInicial) {
+    public CuentaBancaria(String numeroCuenta, double saldoInicial) {
         this.numeroCuenta = numeroCuenta;
         this.saldo = saldoInicial != null ? saldoInicial : BigDecimal.ZERO;
         this.movimientos = new ArrayList<>();
@@ -31,7 +31,7 @@ public class CuentaBancaria {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public BigDecimal getSaldo() {
+    public double getSaldo() {
         return saldo;
     }
 

@@ -54,4 +54,10 @@ public abstract class Movimiento {
     }
 
     public abstract void procesar();
+
+    public boolean getTipo() {
+    }
+
+    public Object getCantidad() {
+    }
 }

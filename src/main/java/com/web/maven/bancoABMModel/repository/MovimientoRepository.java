@@ -70,4 +70,7 @@ public class MovimientoRepository {
     public void registrarMovimiento(Movimiento m) {
         movimientos.add(m);
     }
+
+    public List<Movimiento> obtenerMovimientosDeCuenta(String numeroCuenta) {
+    }
 }

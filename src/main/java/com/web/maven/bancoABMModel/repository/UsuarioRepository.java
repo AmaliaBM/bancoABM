@@ -38,4 +38,7 @@ public class UsuarioRepository {
         usuarios.add(u);
         // opcional: reescribir JSON
     }
+
+    public void importarDesdeJson(List<Usuario> usuariosJson) {
+    }
 }

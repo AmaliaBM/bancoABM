@@ -1,84 +1,59 @@
 package com.web.maven.bancoABMModel.service;
 
+import com.web.maven.bancoABMModel.model.Cuenta;
 import com.web.maven.bancoABMModel.model.CuentaBancaria;
-import com.web.maven.bancoABMModel.model.movimientos.DepositoBancario;
-import com.web.maven.bancoABMModel.model.movimientos.Retiro;
-import com.web.maven.bancoABMModel.model.movimientos.Transferencia;
+import com.web.maven.bancoABMModel.repository.CuentaRepository;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class CuentaService {
 
-    private void validarMonto(BigDecimal monto) {
-        if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor que 0");
+    private CuentaRepository repo = new CuentaRepository();
+
+    public void crearCuenta(String num, double saldoInicial) {
+        if (repo.existeCuenta(num)) {
+            System.out.println("❌ La cuenta ya existe.");
+            return;
+        }
+        repo.guardarCuenta(new Cuenta(num, saldoInicial));
+        System.out.println("✔ Cuenta creada.");
+    }
+
+    public Cuenta obtenerCuenta(String num) {
+        return repo.buscarCuenta(num);
+    }
+
+    public List<Cuenta> obtenerTodas() {
+        return repo.listarCuentas();
+    }
+
+    public void actualizarSaldo(String num, double saldo) {
+        repo.actualizarSaldo(num, saldo);
+        System.out.println("✔ Saldo actualizado.");
+    }
+
+    public void borrarCuenta(String num) {
+        repo.eliminarCuenta(num);
+        System.out.println("✔ Cuenta eliminada.");
+    }
+
+    // === JSON → MySQL ===
+    public void importarDesdeJson(List<Cuenta> cuentasJson) {
+        for (Cuenta c : cuentasJson) {
+            if (!repo.existeCuenta(c.getNumeroCuenta())) {
+                repo.guardarCuenta(c);
+                System.out.println("Importada cuenta: " + c.getNumeroCuenta());
+            }
         }
     }
 
-    private void validarCuenta(CuentaBancaria cuenta) {
-        if (cuenta == null) {
-            throw new IllegalArgumentException("La cuenta no puede ser nula");
-        }
+    public void transferir(CuentaBancaria cuentaUsuario, CuentaBancaria destino, BigDecimal monto) {
     }
 
-    // ===== DEPOSITAR =====
-    public void depositar(CuentaBancaria cuenta, BigDecimal monto) {
-
-        validarCuenta(cuenta);
-        validarMonto(monto);
-
-        DepositoBancario mov = new DepositoBancario(
-                LocalDateTime.now(),
-                monto,
-                cuenta,
-                "deposito",
-                "efectivo"
-        );
-
-        // Se deja que el movimiento procese la operación
-        mov.procesar();
+    public void retirar(CuentaBancaria cuentaUsuario, BigDecimal monto) {
     }
 
-    // ===== RETIRAR =====
-    public void retirar(CuentaBancaria cuenta, BigDecimal monto) {
-
-        validarCuenta(cuenta);
-        validarMonto(monto);
-
-        if (cuenta.getSaldo().compareTo(monto) < 0) {
-            throw new IllegalArgumentException("Saldo insuficiente");
-        }
-
-        Retiro mov = new Retiro(
-                LocalDateTime.now(),
-                monto,
-                cuenta,
-                "retiro"
-        );
-
-        mov.procesar();
-    }
-
-    // ===== TRANSFERIR =====
-    public void transferir(CuentaBancaria origen, CuentaBancaria destino, BigDecimal monto) {
-
-        validarCuenta(origen);
-        validarCuenta(destino);
-        validarMonto(monto);
-
-        if (origen.getSaldo().compareTo(monto) < 0) {
-            throw new IllegalArgumentException("Saldo insuficiente para transferir");
-        }
-
-        Transferencia mov = new Transferencia(
-                LocalDateTime.now(),
-                monto,
-                origen,
-                "transferencia",
-                destino
-        );
-
-        mov.procesar();
+    public void depositar(CuentaBancaria cuentaUsuario, BigDecimal monto) {
     }
 }

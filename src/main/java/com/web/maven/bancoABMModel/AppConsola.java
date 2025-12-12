@@ -1,13 +1,19 @@
 package com.web.maven.bancoABMModel;
 
+
 import com.web.maven.bancoABMModel.model.CuentaBancaria;
+import com.web.maven.bancoABMModel.model.movimientos.Movimiento;
 import com.web.maven.bancoABMModel.model.Usuario;
+
 import com.web.maven.bancoABMModel.repository.CuentaRepository;
 import com.web.maven.bancoABMModel.repository.MovimientoRepository;
 import com.web.maven.bancoABMModel.repository.UsuarioRepository;
+
 import com.web.maven.bancoABMModel.service.CuentaService;
+import com.web.maven.bancoABMModel.util.JsonReader;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,7 +21,7 @@ public class AppConsola {
 
     private static UsuarioRepository usuarioRepo = new UsuarioRepository();
     private static CuentaRepository cuentaRepo = new CuentaRepository();
-    private static MovimientoRepository movimientoRepo;
+    private static MovimientoRepository movimientoRepo = new MovimientoRepository();
     private static CuentaService cuentaService = new CuentaService();
 
     private static Scanner scanner = new Scanner(System.in);
@@ -23,13 +29,14 @@ public class AppConsola {
 
     public static void main(String[] args) {
 
-        // Inicializar cuentas y movimientos
-        List<Usuario> usuarios = usuarioRepo.cargarUsuarios();
-        cuentaRepo.inicializarDesdeUsuarios(usuarios);
-        movimientoRepo = new MovimientoRepository(cuentaRepo);
+        System.out.println("=== CARGANDO DATOS DESDE JSON ===");
+
+        // ===INCIALIZAR CUENTAS Y MOVIMIENTOS importar usuarios y cuentas desde JSON a BD ===
+        List<Usuario> usuariosJson = JsonReader.cargarLista("data/usuarios.json", Usuario[].class);
+        usuarioRepo.importarDesdeJson(usuariosJson);
+        cuentaRepo.inicializarDesdeUsuarios(usuariosJson);
 
         System.out.println("=== BIENVENIDO AL BANCO ===");
-
         login();
 
         int opcion;
@@ -52,10 +59,12 @@ public class AppConsola {
         System.out.print("Ingrese su DNI de usuario: ");
         String dni = scanner.nextLine();
         usuarioActual = usuarioRepo.buscarPorDni(dni);
+
         if (usuarioActual == null) {
             System.out.println("Usuario no encontrado. Saliendo...");
             System.exit(0);
         }
+
         System.out.println("¡Hola, " + usuarioActual.getNombreCompleto() + "!");
     }
 
@@ -106,14 +115,18 @@ public class AppConsola {
             System.out.print("Número de cuenta destino: ");
             String numeroDestino = scanner.nextLine();
             CuentaBancaria destino = cuentaRepo.buscarPorNumero(numeroDestino);
+
             if (destino == null) {
                 System.out.println("Cuenta destino no encontrada.");
                 return;
             }
+
             System.out.print("Monto a transferir: ");
             BigDecimal monto = new BigDecimal(scanner.nextLine());
+
             cuentaService.transferir(getCuentaUsuario(), destino, monto);
             System.out.println("Transferencia exitosa.");
+
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -122,10 +135,13 @@ public class AppConsola {
     private static void verMovimientos() {
         CuentaBancaria c = getCuentaUsuario();
         System.out.println("=== MOVIMIENTOS ===");
-        c.getMovimientos().forEach(m -> System.out.println(
-                m.getClass().getSimpleName() + " | " +
+
+        List<Movimiento> movs = movimientoRepo.obtenerMovimientosDeCuenta(c.getNumeroCuenta());
+
+        movs.forEach(m -> System.out.println(
+                m.getTipo() + " | " +
                         m.getFecha() + " | " +
-                        m.getMonto()
+                        m.getCantidad()
         ));
     }
 }
