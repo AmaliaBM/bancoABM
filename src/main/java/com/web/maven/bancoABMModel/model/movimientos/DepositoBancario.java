@@ -1,31 +1,20 @@
 package com.web.maven.bancoABMModel.model.movimientos;
 
+import com.web.maven.bancoABMModel.model.CuentaBancaria;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.web.maven.bancoABMModel.model.CuentaBancaria;
 
 public class DepositoBancario extends Movimiento {
 
-    public DepositoBancario() {
-        super();
+    // Constructor para crear desde la app (fecha = ahora)
+    public DepositoBancario(CuentaBancaria cuenta, BigDecimal cantidad) {
+        super("Deposito", cantidad, cuenta, null, LocalDateTime.now());
     }
 
-    public DepositoBancario(LocalDateTime fecha, BigDecimal monto,
-                            CuentaBancaria cuentaOrigen, String canal) {
-        super(fecha, monto, cuentaOrigen, canal);
-    }
-
-    @Override
-    public void procesar() {
-        CuentaBancaria cuenta = getCuentaOrigen();
-        if (cuenta == null) return;
-
-        cuenta.setSaldo(cuenta.getSaldo().add(getMonto()));
-        cuenta.agregarMovimiento(this);
-    }
-
-    @Override
-    public String getTipo() {
-        return "DEPÓSITO";
+    // Constructor para crear desde DB (fecha conocida)
+    public DepositoBancario(LocalDateTime fecha, BigDecimal cantidad, CuentaBancaria cuenta) {
+        super("Deposito", cantidad, cuenta, null, fecha);
     }
 }
+

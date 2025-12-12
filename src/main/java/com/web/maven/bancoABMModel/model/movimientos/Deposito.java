@@ -1,22 +1,9 @@
 package com.web.maven.bancoABMModel.model.movimientos;
 
+// Clase abstracta para depósitos, si quieres agrupar tipos de depósitos
 public abstract class Deposito extends Movimiento {
 
-    private String origen;
-
-    public Deposito() {
-        super();
-    }
-
-    public Deposito(String origen) {
-        this.origen = origen;
-    }
-
-    public String getOrigen() {
-        return origen;
-    }
-
-    public void setOrigen(String origen) {
-        this.origen = origen;
+    public Deposito(String tipo, java.math.BigDecimal cantidad, com.web.maven.bancoABMModel.model.CuentaBancaria cuentaDestino, java.time.LocalDateTime fecha) {
+        super(tipo, cantidad, null, cuentaDestino, fecha);
     }
 }

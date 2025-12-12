@@ -11,18 +11,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class JsonReader {
 
-    // Método genérico para cualquier lista de objetos
+    // Método genérico para cualquier lista de objetos (Cuentas, Movimientos)
     public static <T> List<T> cargarLista(String ruta, Class<T[]> clazz) {
-
-
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class,
-                        (JsonDeserializer<LocalDate>) (json, type, context) -> LocalDate.parse(json.getAsString()))
-                .registerTypeAdapter(LocalDateTime.class,
-                        (JsonDeserializer<LocalDateTime>) (json, type, context) -> LocalDateTime.parse(json.getAsString()))
+                .registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, type, context) ->
+                        LocalDate.parse(json.getAsString()))
+                .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, type, context) ->
+                        LocalDateTime.parse(json.getAsString()))
                 .create();
 
         List<T> lista = new ArrayList<>();
@@ -35,19 +32,18 @@ public class JsonReader {
             T[] array = gson.fromJson(reader, clazz);
             return List.of(array);
         } catch (Exception e) {
-
             e.printStackTrace();
             return lista;
         }
     }
 
-    // Metodo polimorfico para usuarios
+    // Método especializado para usuarios polimórficos
     public static List<Usuario> cargarUsuariosPolimorficos(String ruta) {
         Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class,
-                        (JsonDeserializer<LocalDate>) (json, type, context) -> LocalDate.parse(json.getAsString()))
-                .registerTypeAdapter(LocalDateTime.class,
-                        (JsonDeserializer<LocalDateTime>) (json, type, context) -> LocalDateTime.parse(json.getAsString()))
+                .registerTypeAdapter(LocalDate.class, (JsonDeserializer<LocalDate>) (json, type, context) ->
+                        LocalDate.parse(json.getAsString()))
+                .registerTypeAdapter(LocalDateTime.class, (JsonDeserializer<LocalDateTime>) (json, type, context) ->
+                        LocalDateTime.parse(json.getAsString()))
                 .create();
 
         List<Usuario> lista = new ArrayList<>();
@@ -57,7 +53,7 @@ public class JsonReader {
                 return lista;
             }
             Reader reader = new InputStreamReader(is);
-            JsonArray usuariosArray = JsonParser.parseReader(reader).getAsJsonArray(); // <-- leer array directamente
+            JsonArray usuariosArray = JsonParser.parseReader(reader).getAsJsonArray();
 
             for (JsonElement e : usuariosArray) {
                 JsonObject obj = e.getAsJsonObject();
@@ -66,12 +62,10 @@ public class JsonReader {
                 Usuario usuario;
                 switch (tipo) {
                     case "UsuarioParticular":
-                        usuario = gson.fromJson(e,
-                                com.web.maven.bancoABMModel.model.UsuarioParticular.class);
+                        usuario = gson.fromJson(e, com.web.maven.bancoABMModel.model.UsuarioParticular.class);
                         break;
                     case "UsuarioEmpresa":
-                        usuario = gson.fromJson(e,
-                                com.web.maven.bancoABMModel.model.UsuarioEmpresa.class);
+                        usuario = gson.fromJson(e, com.web.maven.bancoABMModel.model.UsuarioEmpresa.class);
                         break;
                     default:
                         usuario = gson.fromJson(e, Usuario.class);
@@ -83,6 +77,4 @@ public class JsonReader {
         }
         return lista;
     }
-
 }
-

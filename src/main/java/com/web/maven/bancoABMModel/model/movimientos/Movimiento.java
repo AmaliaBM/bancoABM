@@ -1,66 +1,63 @@
 package com.web.maven.bancoABMModel.model.movimientos;
 
+import com.web.maven.bancoABMModel.model.CuentaBancaria;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.web.maven.bancoABMModel.model.CuentaBancaria;
 
 public abstract class Movimiento {
 
-    private LocalDateTime fecha;
-    private BigDecimal monto;
-    private CuentaBancaria cuentaOrigen;
-    private String canal;
+    protected String tipo;
+    protected BigDecimal cantidad;
+    protected CuentaBancaria cuentaOrigen;
+    protected CuentaBancaria cuentaDestino;
+    protected LocalDateTime fecha;
 
-    public Movimiento() {
-    }
-
-    public Movimiento(LocalDateTime fecha, BigDecimal monto, CuentaBancaria cuentaOrigen, String canal) {
-        this.fecha = fecha;
-        this.monto = monto;
-        this.cuentaOrigen = cuentaOrigen;
-        this.canal = canal;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
+    public Movimiento(String tipo, BigDecimal cantidad, CuentaBancaria origen, CuentaBancaria destino, LocalDateTime fecha) {
+        this.tipo = tipo;
+        this.cantidad = cantidad;
+        this.cuentaOrigen = origen;
+        this.cuentaDestino = destino;
         this.fecha = fecha;
     }
 
-    public BigDecimal getMonto() {
-        return monto;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
+    public BigDecimal getCantidad() {
+        return cantidad;
     }
 
     public CuentaBancaria getCuentaOrigen() {
         return cuentaOrigen;
     }
 
+    public CuentaBancaria getCuentaDestino() {
+        return cuentaDestino;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setCantidad(BigDecimal cantidad) {
+        this.cantidad = cantidad;
+    }
+
     public void setCuentaOrigen(CuentaBancaria cuentaOrigen) {
         this.cuentaOrigen = cuentaOrigen;
     }
 
-    public String getCanal() {
-        return canal;
+    public void setCuentaDestino(CuentaBancaria cuentaDestino) {
+        this.cuentaDestino = cuentaDestino;
     }
 
-    public void setCanal(String canal) {
-        this.canal = canal;
-    }
-
-    // Cada movimiento debe procesarse
-    public abstract void procesar();
-
-    // Tipo de movimiento: "INGRESO", "RETIRO", "TRANSFERENCIA"
-    public abstract String getTipo();
-
-    // Cantidad del movimiento (mismo que el monto)
-    public BigDecimal getCantidad() {
-        return monto;
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
     }
 }

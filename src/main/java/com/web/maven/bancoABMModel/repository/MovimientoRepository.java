@@ -1,94 +1,80 @@
 package com.web.maven.bancoABMModel.repository;
 
-import com.google.gson.*;
 import com.web.maven.bancoABMModel.model.CuentaBancaria;
 import com.web.maven.bancoABMModel.model.movimientos.*;
+import com.web.maven.bancoABMModel.util.DatabaseConfig;
 
-import java.io.*;
 import java.math.BigDecimal;
+import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovimientoRepository {
 
-    private final List<Movimiento> movimientos = new ArrayList<>();
-    private final CuentaRepository cuentaRepo;
+    // Registrar cualquier tipo de movimiento
+    public void registrar(Movimiento m) {
+        String sql = "INSERT INTO movimientos (tipo, cuenta_origen, cuenta_destino, monto, fecha_hora) VALUES (?,?,?,?,?)";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    // Constructor recibe el repo de cuentas
-    public MovimientoRepository(CuentaRepository cuentaRepo) {
-        this.cuentaRepo = cuentaRepo;
-        cargarDesdeJson("data/movimientos.json");
-    }
+            ps.setString(1, m.getTipo());
+            ps.setString(2, m.getCuentaOrigen() != null ? m.getCuentaOrigen().getNumeroCuenta() : null);
+            ps.setString(3, m.getCuentaDestino() != null ? m.getCuentaDestino().getNumeroCuenta() : null);
+            ps.setDouble(4, m.getCantidad().doubleValue());
+            ps.setTimestamp(5, Timestamp.valueOf(m.getFecha()));
+            ps.executeUpdate();
 
-    private void cargarDesdeJson(String rutaRelativa) {
-        try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(rutaRelativa)) {
-
-            if (is == null) return;
-
-            Reader reader = new InputStreamReader(is);
-            JsonElement root = JsonParser.parseReader(reader);
-
-            if (!root.isJsonArray()) return;
-
-            JsonArray arr = root.getAsJsonArray();
-
-            for (JsonElement el : arr) {
-                JsonObject obj = el.getAsJsonObject();
-                String tipo = obj.has("tipo") ? obj.get("tipo").getAsString() : "Retiro";
-
-                String origenNum = obj.has("cuentaOrigen") ? obj.get("cuentaOrigen").getAsString() : null;
-                CuentaBancaria origen = origenNum != null ? cuentaRepo.buscarPorNumero(origenNum) : null;
-
-                BigDecimal monto = obj.has("monto") ? new BigDecimal(obj.get("monto").getAsString()) : BigDecimal.ZERO;
-                LocalDateTime fecha = obj.has("fecha") ? LocalDateTime.parse(obj.get("fecha").getAsString()) : LocalDateTime.now();
-                String canal = obj.has("canal") ? obj.get("canal").getAsString() : "DESCONOCIDO";
-
-                switch (tipo) {
-                    case "Transferencia":
-                        String destinoNum = obj.has("cuentaDestino") ? obj.get("cuentaDestino").getAsString() : null;
-                        CuentaBancaria destino = destinoNum != null ? cuentaRepo.buscarPorNumero(destinoNum) : null;
-                        Transferencia t = new Transferencia(fecha, monto, origen, canal, destino);
-                        movimientos.add(t);
-                        break;
-                    case "Deposito":
-                        movimientos.add(new DepositoBancario(fecha,monto,origen,canal));
-                        break;
-                    default:
-                        Retiro r = new Retiro(fecha, monto, origen, canal);
-                        movimientos.add(r);
-                        break;
-                }
-            }
-
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {  // para DatabaseConfig.getConnection() si lanza Exception
             e.printStackTrace();
         }
     }
 
-    public List<Movimiento> cargarMovimientos() {
-        return movimientos;
+    public void importarDesdeJson(List<Movimiento> movimientos) {
+        if (movimientos == null) return;
+        for (Movimiento m : movimientos) registrar(m);
     }
 
-    public void registrarMovimiento(Movimiento m) {
-        movimientos.add(m);
-        if (m.getCuentaOrigen() != null) {
-            m.getCuentaOrigen().agregarMovimiento(m);
-        }
-        if (m instanceof Transferencia t && t.getCuentaDestino() != null) {
-            t.getCuentaDestino().agregarMovimiento(m);
-        }
-    }
+    public List<Movimiento> obtenerMovimientos(String numeroCuenta) {
+        List<Movimiento> lista = new ArrayList<>();
+        String sql = "SELECT * FROM movimientos WHERE cuenta_origen = ? OR cuenta_destino = ? ORDER BY fecha_hora DESC";
 
-    public List<Movimiento> obtenerMovimientosDeCuenta(String numeroCuenta) {
-        List<Movimiento> resultado = new ArrayList<>();
-        for (Movimiento m : movimientos) {
-            if (m.getCuentaOrigen() != null && numeroCuenta.equals(m.getCuentaOrigen().getNumeroCuenta())) {
-                resultado.add(m);
-            } else if (m instanceof Transferencia t && t.getCuentaDestino() != null &&
-                    numeroCuenta.equals(t.getCuentaDestino().getNumeroCuenta())) {
-                resultado.add(m);
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, numeroCuenta);
+            ps.setString(2, numeroCuenta);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String tipo = rs.getString("tipo");
+                String origen = rs.getString("cuenta_origen");
+                String destino = rs.getString("cuenta_destino");
+                BigDecimal monto = BigDecimal.valueOf(rs.getDouble("monto"));
+                LocalDateTime fecha = rs.getTimestamp("fecha_hora").toLocalDateTime();
+
+                Movimiento m = null;
+                switch (tipo) {
+                    case "Deposito":
+                        m = new DepositoBancario(fecha, monto, new CuentaBancaria(origen, 0));
+                        break;
+                    case "Retiro":
+                        m = new Retiro(fecha, monto, new CuentaBancaria(origen, 0));
+                        break;
+                    case "Transferencia":
+                        m = new Transferencia(fecha, monto, new CuentaBancaria(origen, 0), new CuentaBancaria(destino, 0));
+                        break;
+                }
+                if (m != null) lista.add(m);
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return resultado;
+        return lista;
     }
 }

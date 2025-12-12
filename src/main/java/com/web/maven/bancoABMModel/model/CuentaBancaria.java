@@ -3,7 +3,6 @@ package com.web.maven.bancoABMModel.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.web.maven.bancoABMModel.model.movimientos.Movimiento;
 
 public class CuentaBancaria {
@@ -17,18 +16,21 @@ public class CuentaBancaria {
         this.movimientos = new ArrayList<>();
     }
 
-    // Constructor público que recibe BigDecimal
+    // Constructor que recibe BigDecimal
     public CuentaBancaria(String numeroCuenta, BigDecimal saldoInicial) {
         this.numeroCuenta = numeroCuenta;
         this.saldo = (saldoInicial != null) ? saldoInicial : BigDecimal.ZERO;
         this.movimientos = new ArrayList<>();
     }
 
-    // Conveniencia: constructor que acepta double (convierte internamente)
+    // Constructor que acepta double para comodidad
     public CuentaBancaria(String numeroCuenta, double saldoInicial) {
         this(numeroCuenta, BigDecimal.valueOf(saldoInicial));
     }
 
+    // ======================
+    // GETTERS Y SETTERS
+    // ======================
     public String getNumeroCuenta() {
         return numeroCuenta;
     }
@@ -53,10 +55,22 @@ public class CuentaBancaria {
         this.movimientos = movimientos;
     }
 
+    // ======================
+    // MÉTODOS DE AYUDA
+    // ======================
+
     public void agregarMovimiento(Movimiento movimiento) {
         if (this.movimientos == null) {
             this.movimientos = new ArrayList<>();
         }
         this.movimientos.add(movimiento);
+    }
+
+    // Obtener fecha del último movimiento (útil para AppConsola)
+    public java.time.LocalDateTime getFechaUltimoMovimiento() {
+        if (movimientos == null || movimientos.isEmpty()) {
+            return java.time.LocalDateTime.now();
+        }
+        return movimientos.get(movimientos.size() - 1).getFecha();
     }
 }
