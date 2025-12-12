@@ -1,6 +1,5 @@
 package com.web.maven.bancoABMModel;
 
-
 import com.web.maven.bancoABMModel.model.CuentaBancaria;
 import com.web.maven.bancoABMModel.model.movimientos.Movimiento;
 import com.web.maven.bancoABMModel.model.Usuario;
@@ -13,7 +12,6 @@ import com.web.maven.bancoABMModel.service.CuentaService;
 import com.web.maven.bancoABMModel.util.JsonReader;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,7 +19,7 @@ public class AppConsola {
 
     private static UsuarioRepository usuarioRepo = new UsuarioRepository();
     private static CuentaRepository cuentaRepo = new CuentaRepository();
-    private static MovimientoRepository movimientoRepo = new MovimientoRepository();
+    private static MovimientoRepository movimientoRepo = new MovimientoRepository(cuentaRepo);
     private static CuentaService cuentaService = new CuentaService();
 
     private static Scanner scanner = new Scanner(System.in);

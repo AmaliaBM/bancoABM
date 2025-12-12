@@ -21,4 +21,9 @@ public class Retiro extends Movimiento {
         origen.setSaldo(origen.getSaldo().subtract(getMonto()));
         origen.agregarMovimiento(this);
     }
+
+    @Override
+    public String getTipo() {
+        return "RETIRO";
+    }
 }

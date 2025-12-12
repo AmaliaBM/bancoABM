@@ -38,4 +38,9 @@ public class Transferencia extends Movimiento {
         origen.agregarMovimiento(this);
         destino.agregarMovimiento(this);
     }
+
+    @Override
+    public String getTipo() {
+        return "TRANSFERENCIA";
+    }
 }

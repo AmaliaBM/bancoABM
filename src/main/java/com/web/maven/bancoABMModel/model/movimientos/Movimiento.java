@@ -53,11 +53,14 @@ public abstract class Movimiento {
         this.canal = canal;
     }
 
+    // Cada movimiento debe procesarse
     public abstract void procesar();
 
-    public boolean getTipo() {
-    }
+    // Tipo de movimiento: "INGRESO", "RETIRO", "TRANSFERENCIA"
+    public abstract String getTipo();
 
-    public Object getCantidad() {
+    // Cantidad del movimiento (mismo que el monto)
+    public BigDecimal getCantidad() {
+        return monto;
     }
 }

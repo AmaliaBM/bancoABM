@@ -13,12 +13,11 @@ public class CuentaRepository {
     // CREATE
     public void guardarCuenta(CuentaBancaria cuenta) {
         String sql = "INSERT INTO cuentas (numeroCuenta, saldo) VALUES (?, ?)";
-
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, cuenta.getNumeroCuenta());
-            ps.setDouble(2, cuenta.getSaldo());
+            ps.setBigDecimal(2, cuenta.getSaldo());
             ps.executeUpdate();
 
         } catch (Exception e) {
@@ -27,7 +26,7 @@ public class CuentaRepository {
     }
 
     // READ - find by ID
-    public Cuenta buscarCuenta(String numeroCuenta) {
+    public CuentaBancaria buscarCuenta(String numeroCuenta) {
         String sql = "SELECT * FROM cuentas WHERE numeroCuenta = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -36,7 +35,7 @@ public class CuentaRepository {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new Cuenta(
+                return new CuentaBancaria(
                         rs.getString("numeroCuenta"),
                         rs.getDouble("saldo")
                 );
@@ -49,8 +48,8 @@ public class CuentaRepository {
     }
 
     // READ - list all
-    public List<Cuenta> listarCuentas() {
-        List<Cuenta> lista = new ArrayList<>();
+    public List<CuentaBancaria> listarCuentas() {
+        List<CuentaBancaria> lista = new ArrayList<>();
         String sql = "SELECT * FROM cuentas";
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -73,7 +72,6 @@ public class CuentaRepository {
     // UPDATE
     public void actualizarSaldo(String numeroCuenta, double nuevoSaldo) {
         String sql = "UPDATE cuentas SET saldo = ? WHERE numeroCuenta = ?";
-
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -89,7 +87,6 @@ public class CuentaRepository {
     // DELETE
     public void eliminarCuenta(String numeroCuenta) {
         String sql = "DELETE FROM cuentas WHERE numeroCuenta = ?";
-
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -103,23 +100,31 @@ public class CuentaRepository {
 
     // check if exists
     public boolean existeCuenta(String numeroCuenta) {
-        String sql = "SELECT COUNT(*) FROM cuentas WHERE numeroCuenta = ?";
+        String sql = "SELECT 1 FROM cuentas WHERE numeroCuenta = ?";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, numeroCuenta);
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1) > 0;
+            return rs.next();
 
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
         }
+        return false;
     }
 
-    public void inicializarDesdeUsuarios(List<Usuario> usuariosJson) {
-    }
-
+    // Buscar por número de cuenta (devuelve null si no existe)
     public CuentaBancaria buscarPorNumero(String cuentaBancaria) {
+        return buscarCuenta(cuentaBancaria);
+    }
+
+    // Inicializar cuentas desde JSON de usuarios
+    public void inicializarDesdeUsuarios(List<Usuario> usuariosJson) {
+        for (Usuario u : usuariosJson) {
+            if (u.getCuentaBancaria() != null && !existeCuenta(u.getCuentaBancaria())) {
+                guardarCuenta(new CuentaBancaria(u.getCuentaBancaria(), 0));
+            }
+        }
     }
 }

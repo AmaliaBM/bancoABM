@@ -17,10 +17,16 @@ public class CuentaBancaria {
         this.movimientos = new ArrayList<>();
     }
 
-    public CuentaBancaria(String numeroCuenta, double saldoInicial) {
+    // Constructor público que recibe BigDecimal
+    public CuentaBancaria(String numeroCuenta, BigDecimal saldoInicial) {
         this.numeroCuenta = numeroCuenta;
-        this.saldo = saldoInicial != null ? saldoInicial : BigDecimal.ZERO;
+        this.saldo = (saldoInicial != null) ? saldoInicial : BigDecimal.ZERO;
         this.movimientos = new ArrayList<>();
+    }
+
+    // Conveniencia: constructor que acepta double (convierte internamente)
+    public CuentaBancaria(String numeroCuenta, double saldoInicial) {
+        this(numeroCuenta, BigDecimal.valueOf(saldoInicial));
     }
 
     public String getNumeroCuenta() {
@@ -31,7 +37,7 @@ public class CuentaBancaria {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public double getSaldo() {
+    public BigDecimal getSaldo() {
         return saldo;
     }
 

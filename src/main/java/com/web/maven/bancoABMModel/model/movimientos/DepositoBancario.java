@@ -4,20 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import com.web.maven.bancoABMModel.model.CuentaBancaria;
 
-public class DepositoBancario extends Deposito {
+public class DepositoBancario extends Movimiento {
 
     public DepositoBancario() {
         super();
     }
 
     public DepositoBancario(LocalDateTime fecha, BigDecimal monto,
-                            CuentaBancaria cuentaOrigen, String canal, String origen) {
-
-        super(origen);
-        setFecha(fecha);
-        setMonto(monto);
-        setCuentaOrigen(cuentaOrigen);
-        setCanal(canal);
+                            CuentaBancaria cuentaOrigen, String canal) {
+        super(fecha, monto, cuentaOrigen, canal);
     }
 
     @Override
@@ -27,5 +22,10 @@ public class DepositoBancario extends Deposito {
 
         cuenta.setSaldo(cuenta.getSaldo().add(getMonto()));
         cuenta.agregarMovimiento(this);
+    }
+
+    @Override
+    public String getTipo() {
+        return "DEPÓSITO";
     }
 }

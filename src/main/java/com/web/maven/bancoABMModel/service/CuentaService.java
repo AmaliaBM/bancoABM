@@ -1,6 +1,6 @@
 package com.web.maven.bancoABMModel.service;
 
-import com.web.maven.bancoABMModel.model.Cuenta;
+
 import com.web.maven.bancoABMModel.model.CuentaBancaria;
 import com.web.maven.bancoABMModel.repository.CuentaRepository;
 
@@ -16,15 +16,15 @@ public class CuentaService {
             System.out.println("❌ La cuenta ya existe.");
             return;
         }
-        repo.guardarCuenta(new Cuenta(num, saldoInicial));
+        repo.guardarCuenta(new CuentaBancaria(num, saldoInicial));
         System.out.println("✔ Cuenta creada.");
     }
 
-    public Cuenta obtenerCuenta(String num) {
+    public CuentaBancaria obtenerCuenta(String num) {
         return repo.buscarCuenta(num);
     }
 
-    public List<Cuenta> obtenerTodas() {
+    public List<CuentaBancaria> obtenerTodas() {
         return repo.listarCuentas();
     }
 
@@ -39,8 +39,8 @@ public class CuentaService {
     }
 
     // === JSON → MySQL ===
-    public void importarDesdeJson(List<Cuenta> cuentasJson) {
-        for (Cuenta c : cuentasJson) {
+    public void importarDesdeJson(List<CuentaBancaria> cuentasJson) {
+        for (CuentaBancaria c : cuentasJson) {
             if (!repo.existeCuenta(c.getNumeroCuenta())) {
                 repo.guardarCuenta(c);
                 System.out.println("Importada cuenta: " + c.getNumeroCuenta());
@@ -55,5 +55,6 @@ public class CuentaService {
     }
 
     public void depositar(CuentaBancaria cuentaUsuario, BigDecimal monto) {
+
     }
 }
