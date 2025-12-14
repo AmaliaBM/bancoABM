@@ -69,6 +69,7 @@ public class AppConsola {
             System.out.println("2. Depositar");
             System.out.println("3. Retirar");
             System.out.println("4. Transferir");
+            System.out.println("5. Ver movimientos");
             System.out.println("0. Logout");
             System.out.print("Opción: ");
 
@@ -80,6 +81,7 @@ public class AppConsola {
                 case 2 -> depositar(u);
                 case 3 -> retirar(u);
                 case 4 -> transferir(u);
+                case 5 -> verMovimientos(u); // <- llamar método nuevo
             }
         } while (opcion != 0);
     }
@@ -183,5 +185,24 @@ public class AppConsola {
 
         System.out.println("✔ Usuario creado con cuenta " + numeroCuenta);
     }
+
+    private static void verMovimientos(Usuario u) {
+        String numeroCuenta = u.getCuentaBancaria();
+        var movimientos = movimientoRepo.obtenerPorCuenta(numeroCuenta); // <- método del repo
+
+        if (movimientos.isEmpty()) {
+            System.out.println("❌ No hay movimientos registrados");
+            return;
+        }
+
+        System.out.println("\n=== MOVIMIENTOS DE LA CUENTA " + numeroCuenta + " ===");
+        for (var m : movimientos) {
+            System.out.println("Fecha: " + m.getFecha() +
+                    " | Tipo: " + m.getTipo() +
+                    " | Cantidad: " + m.getCantidad() +
+                    (m.getCuentaDestino() != null ? " | Destino: " + m.getCuentaDestino().getNumeroCuenta() : ""));
+        }
+    }
+
 
 }
