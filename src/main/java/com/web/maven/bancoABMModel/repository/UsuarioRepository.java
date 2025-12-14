@@ -27,7 +27,7 @@ public class UsuarioRepository {
             usuarios.add(u);
         }
 
-        // Genera idUsuario único si quieres usarlo como identificador único visible
+        // Genera idUsuario único: identificador único visible
         if (u.getIdUsuario() == null || u.getIdUsuario().isEmpty()) {
             u.setIdUsuario("U" + System.currentTimeMillis());
         }

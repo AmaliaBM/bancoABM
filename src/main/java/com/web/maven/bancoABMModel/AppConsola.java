@@ -26,7 +26,7 @@ public class AppConsola {
 
         System.out.println("=== CARGANDO DATOS DESDE JSON ===");
 
-        // ✔️ USO CORRECTO DE TU JsonLoader
+        // ✔️ USO CORRECTO JsonLoader
         JsonLoader loader = new JsonLoader(usuarioRepo, cuentaRepo, movimientoRepo);
         loader.cargarTodo();
 

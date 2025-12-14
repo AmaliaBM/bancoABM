@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MovimientoRepository {
 
-    // Mantener registro de movimientos en memoria (si quieres)
+    // Mantener registro de movimientos en memoria
     private final List<Movimiento> movimientos = new ArrayList<>();
 
     // Registrar movimiento en BD

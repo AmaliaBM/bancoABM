@@ -11,7 +11,7 @@ public class PersonaRepository {
     private final List<Persona> personas;
 
     public PersonaRepository() {
-        // Si tienes un JSON de personas independiente: "data/personas.json"
+
         this.personas = JsonReader.cargarLista("data/personas.json", Persona[].class);
 
     }
@@ -31,6 +31,6 @@ public class PersonaRepository {
     public void guardar(Persona p) {
         // simple: añadir a la lista en memoria
         personas.add(p);
-        // Si quieres, aquí serializas de nuevo al JSON (implementación opcional)
+
     }
 }
