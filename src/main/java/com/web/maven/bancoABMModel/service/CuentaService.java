@@ -8,10 +8,13 @@ import java.util.List;
 
 public class CuentaService {
 
-    private CuentaRepository repo = new CuentaRepository();
+    private final CuentaRepository repo;
 
-    // Crear cuenta
-    public void crearCuenta(String num, double saldoInicial) {
+    public CuentaService(CuentaRepository repo) {
+        this.repo = repo;
+    }
+
+    public void crearCuenta(String num, BigDecimal saldoInicial) {
         if (repo.existeCuenta(num)) {
             System.out.println("❌ La cuenta ya existe.");
             return;
@@ -20,76 +23,41 @@ public class CuentaService {
         System.out.println("✔ Cuenta creada.");
     }
 
-    // Obtener cuenta
     public CuentaBancaria obtenerCuenta(String num) {
         return repo.obtenerCuenta(num);
     }
 
-    // Listar todas
-    public List<CuentaBancaria> obtenerTodas() {
-        return repo.listarCuentas();
-    }
-
-    // Actualizar saldo
-    public void actualizarSaldo(String num, double saldo) {
+    public void actualizarSaldo(String num, BigDecimal saldo) {
         repo.actualizarSaldo(num, saldo);
         System.out.println("✔ Saldo actualizado.");
     }
 
-    // Borrar cuenta
-    public void borrarCuenta(String num) {
-        repo.eliminarCuenta(num);
-        System.out.println("✔ Cuenta eliminada.");
+    public void depositar(CuentaBancaria cuenta, BigDecimal monto) throws Exception {
+        if (monto.compareTo(BigDecimal.ZERO) <= 0)
+            throw new Exception("Monto debe ser mayor a cero");
+        cuenta.setSaldo(cuenta.getSaldo().add(monto));
+        repo.actualizarSaldo(cuenta.getNumeroCuenta(), cuenta.getSaldo());
     }
 
-    // Importar desde JSON
-    public void importarDesdeJson(List<CuentaBancaria> cuentasJson) {
-        for (CuentaBancaria c : cuentasJson) {
-            if (!repo.existeCuenta(c.getNumeroCuenta())) {
-                repo.guardarCuenta(c);
-                System.out.println("Importada cuenta: " + c.getNumeroCuenta());
-            }
-        }
+    public void retirar(CuentaBancaria cuenta, BigDecimal monto) throws Exception {
+        if (monto.compareTo(BigDecimal.ZERO) <= 0)
+            throw new Exception("Monto debe ser mayor a cero");
+        if (cuenta.getSaldo().compareTo(monto) < 0)
+            throw new Exception("Fondos insuficientes");
+        cuenta.setSaldo(cuenta.getSaldo().subtract(monto));
+        repo.actualizarSaldo(cuenta.getNumeroCuenta(), cuenta.getSaldo());
     }
 
-    // ==========================
-    // OPERACIONES DE SALDO
-    // ==========================
-    public void depositar(CuentaBancaria cuentaUsuario, BigDecimal monto) throws Exception {
-        if (monto.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new Exception("El monto a depositar debe ser mayor que cero.");
-        }
-        BigDecimal nuevoSaldo = cuentaUsuario.getSaldo().add(monto);
-        cuentaUsuario.setSaldo(nuevoSaldo);
-        repo.actualizarSaldo(cuentaUsuario.getNumeroCuenta(), nuevoSaldo.doubleValue());
-    }
+    public void transferir(CuentaBancaria origen, CuentaBancaria destino, BigDecimal monto) throws Exception {
+        if (monto.compareTo(BigDecimal.ZERO) <= 0)
+            throw new Exception("Monto debe ser mayor a cero");
+        if (origen.getSaldo().compareTo(monto) < 0)
+            throw new Exception("Fondos insuficientes");
 
-    public void retirar(CuentaBancaria cuentaUsuario, BigDecimal monto) throws Exception {
-        if (monto.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new Exception("El monto a retirar debe ser mayor que cero.");
-        }
-        if (cuentaUsuario.getSaldo().compareTo(monto) < 0) {
-            throw new Exception("Fondos insuficientes.");
-        }
-        BigDecimal nuevoSaldo = cuentaUsuario.getSaldo().subtract(monto);
-        cuentaUsuario.setSaldo(nuevoSaldo);
-        repo.actualizarSaldo(cuentaUsuario.getNumeroCuenta(), nuevoSaldo.doubleValue());
-    }
-
-    public void transferir(CuentaBancaria cuentaUsuario, CuentaBancaria destino, BigDecimal monto) throws Exception {
-        if (monto.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new Exception("El monto a transferir debe ser mayor que cero.");
-        }
-        if (cuentaUsuario.getSaldo().compareTo(monto) < 0) {
-            throw new Exception("Fondos insuficientes para la transferencia.");
-        }
-
-        // Actualizar saldos
-        cuentaUsuario.setSaldo(cuentaUsuario.getSaldo().subtract(monto));
+        origen.setSaldo(origen.getSaldo().subtract(monto));
         destino.setSaldo(destino.getSaldo().add(monto));
 
-        // Actualizar en base de datos
-        repo.actualizarSaldo(cuentaUsuario.getNumeroCuenta(), cuentaUsuario.getSaldo().doubleValue());
-        repo.actualizarSaldo(destino.getNumeroCuenta(), destino.getSaldo().doubleValue());
+        repo.actualizarSaldo(origen.getNumeroCuenta(), origen.getSaldo());
+        repo.actualizarSaldo(destino.getNumeroCuenta(), destino.getSaldo());
     }
 }

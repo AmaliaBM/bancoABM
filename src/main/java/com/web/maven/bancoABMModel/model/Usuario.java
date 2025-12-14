@@ -1,41 +1,38 @@
 package com.web.maven.bancoABMModel.model;
-public class Usuario extends Persona {
 
+public class Usuario {
+
+    private int id; // <- campo para ID autoincrement
     private String idUsuario;
     private String hashContrasenya;
-    private String cuentaBancaria; // podría ser número de cuenta
+    private String cuentaBancaria;
+    private String nombre;
+    private String apellido;
+    private String dni;
+    private String tipo; // obligatorio
 
-    public Usuario() {
-        super();
-    }
+    // Getters y setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public Usuario(String idUsuario, String hashContrasenya, String cuentaBancaria) {
-        this.idUsuario = idUsuario;
-        this.hashContrasenya = hashContrasenya;
-        this.cuentaBancaria = cuentaBancaria;
-    }
+    public String getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(String idUsuario) { this.idUsuario = idUsuario; }
 
-    public String getIdUsuario() {
-        return idUsuario;
-    }
+    public String getHashContrasenya() { return hashContrasenya; }
+    public void setHashContrasenya(String hashContrasenya) { this.hashContrasenya = hashContrasenya; }
 
-    public void setIdUsuario(String idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+    public String getCuentaBancaria() { return cuentaBancaria; }
+    public void setCuentaBancaria(String cuentaBancaria) { this.cuentaBancaria = cuentaBancaria; }
 
-    public String getHashContrasenya() {
-        return hashContrasenya;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public void setHashContrasenya(String hashContrasenya) {
-        this.hashContrasenya = hashContrasenya;
-    }
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
 
-    public String getCuentaBancaria() {
-        return cuentaBancaria;
-    }
+    public String getDni() { return dni; }
+    public void setDni(String dni) { this.dni = dni; }
 
-    public void setCuentaBancaria(String cuentaBancaria) {
-        this.cuentaBancaria = cuentaBancaria;
-    }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 }

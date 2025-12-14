@@ -29,15 +29,25 @@ public class JsonLoader {
 
         // === 1) USUARIOS ===
         List<Usuario> usuarios = JsonReader.cargarLista("data/usuarios.json", Usuario[].class);
-        usuarioRepo.importarDesdeJson(usuarios);
+        for (Usuario u : usuarios) {
+            // Solo guarda en memoria para login desde JSON
+            usuarioRepo.agregarUsuario(u);
+        }
 
         // === 2) CUENTAS ===
         List<CuentaBancaria> cuentas = JsonReader.cargarLista("data/cuentas.json", CuentaBancaria[].class);
-        cuentaRepo.importarDesdeJson(cuentas);
+        for (CuentaBancaria c : cuentas) {
+            // Guarda en memoria y BD si no existe
+            if (cuentaRepo.obtenerCuenta(c.getNumeroCuenta()) == null) {
+                cuentaRepo.guardarCuenta(c);
+            }
+        }
 
         // === 3) MOVIMIENTOS ===
         List<Movimiento> movimientos = JsonReader.cargarLista("data/movimientos.json", Movimiento[].class);
-        movimientoRepo.importarDesdeJson(movimientos);
+        for (Movimiento m : movimientos) {
+            movimientoRepo.registrar(m);
+        }
 
         System.out.println("=== Datos cargados desde JSON correctamente ===");
     }
